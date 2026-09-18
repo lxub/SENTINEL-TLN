@@ -22,7 +22,7 @@ SENTINEL uses `pytesseract` for image OCR analysis. **`pytesseract` is only a Py
   sudo apt update && sudo apt install -y tesseract-ocr
   ```
 
-> ⚠️ **Important:** Verify installation by running `tesseract --version` in your terminal before running OCR image analysis.
+> ⚠️❗️ **Important:** Verify installation by running `tesseract --version` in your terminal before running OCR image analysis.
 
 ---
 
