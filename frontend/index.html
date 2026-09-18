@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07111f" />
+  <title>SENTINEL — Threat Analysis</title>
+  <link rel="stylesheet" href="/ui/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="logo-mark">S</div>
+        <div>
+          <div class="brand">SENTINEL</div>
+          <div class="tagline">Personal AI security layer</div>
+        </div>
+      </div>
+      <div class="status-pill" id="apiStatus"><span class="status-dot"></span> Checking API…</div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">THREAT ANALYSIS CONSOLE</p>
+          <h1>Inspect a message before you trust it.</h1>
+          <p class="hero-copy">SENTINEL checks for social engineering, phishing, privacy exposure, and abusive content, then combines the detector results into one risk view.</p>
+        </div>
+        <div class="engine-card">
+          <div class="engine-title">ENGINE</div>
+          <div class="engine-value">4 DETECTORS</div>
+          <div class="engine-sub">Text + OCR image analysis</div>
+        </div>
+      </section>
+
+      <section class="workspace grid-2">
+        <article class="panel input-panel">
+          <div class="panel-header">
+            <div>
+              <p class="section-kicker">INPUT</p>
+              <h2>Analyze content</h2>
+            </div>
+            <button class="ghost-btn" id="clearBtn">Clear</button>
+          </div>
+
+          <div class="tabs" role="tablist">
+            <button class="tab active" id="textTab" data-mode="text">Text</button>
+            <button class="tab" id="imageTab" data-mode="image">Image / OCR</button>
+          </div>
+
+          <div id="textMode" class="mode-panel">
+            <textarea id="textInput" maxlength="25000" placeholder="Paste an email, DM, SMS, alert, or any suspicious message…"></textarea>
+            <div class="input-meta"><span id="charCount">0 / 25000</span><span>Plain-text analysis</span></div>
+          </div>
+
+          <div id="imageMode" class="mode-panel hidden">
+            <label class="dropzone" id="dropzone" for="imageInput">
+              <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/tiff" hidden />
+              <div class="upload-icon">↑</div>
+              <div class="upload-title">Drop a screenshot here</div>
+              <div class="upload-sub">or click to choose an image · max 10 MB</div>
+              <div class="file-name" id="fileName">No file selected</div>
+            </label>
+          </div>
+
+          <div class="sample-row">
+            <span class="sample-label">Try a sample:</span>
+            <button class="sample-btn" data-sample="safe">Safe</button>
+            <button class="sample-btn" data-sample="phishing">Phishing</button>
+            <button class="sample-btn" data-sample="pressure">Social engineering</button>
+          </div>
+
+          <button class="analyze-btn" id="analyzeBtn">
+            <span id="analyzeLabel">Analyze message</span>
+            <span class="btn-arrow">→</span>
+          </button>
+          <div class="error-box hidden" id="errorBox"></div>
+        </article>
+
+        <article class="panel overview-panel">
+          <div class="panel-header">
+            <div>
+              <p class="section-kicker">RESULT</p>
+              <h2>Risk overview</h2>
+            </div>
+            <div class="time-chip" id="processingTime">—</div>
+          </div>
+
+          <div class="score-card">
+            <div class="score-ring" id="scoreRing">
+              <div class="score-inner">
+                <div class="score-value" id="overallScore">0.0</div>
+                <div class="score-label">CVSS</div>
+              </div>
+            </div>
+            <div class="score-copy">
+              <div class="severity-label" id="overallSeverity">NO ANALYSIS</div>
+              <div class="score-title" id="resultTitle">Ready to inspect content</div>
+              <div class="score-sub" id="resultSubtitle">Your combined threat assessment will appear here.</div>
+            </div>
+          </div>
+
+          <div class="category-strip" id="categoryStrip">
+            <div class="category-empty">No detections yet.</div>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-box">
+              <div class="summary-label">Detected categories</div>
+              <div class="summary-value" id="categoryCount">0</div>
+            </div>
+            <div class="summary-box">
+              <div class="summary-label">Correlations</div>
+              <div class="summary-value" id="correlationCount">0</div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel detections-panel">
+        <div class="panel-header">
+          <div>
+            <p class="section-kicker">DETAILS</p>
+            <h2>Detector results</h2>
+          </div>
+          <button class="ghost-btn" id="jsonBtn">Copy JSON</button>
+        </div>
+        <div id="detections" class="detections-grid">
+          <div class="empty-state">
+            <div class="empty-icon">◎</div>
+            <h3>No analysis yet</h3>
+            <p>Run an analysis to see detector confidence, indicators, evidence, and CVSS metrics.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-2 bottom-grid">
+        <article class="panel">
+          <div class="panel-header"><div><p class="section-kicker">WHY</p><h2>Explanation</h2></div></div>
+          <p class="explanation" id="explanation">SENTINEL will summarize the combined result here.</p>
+          <div class="correlations" id="correlations"><span class="muted">No correlations.</span></div>
+        </article>
+        <article class="panel">
+          <div class="panel-header"><div><p class="section-kicker">ACTION</p><h2>Recommendations</h2></div></div>
+          <div class="recommendations" id="recommendations"><div class="muted">No recommendations yet.</div></div>
+        </article>
+      </section>
+
+      <section class="panel extracted-panel hidden" id="extractedPanel">
+        <div class="panel-header"><div><p class="section-kicker">OCR</p><h2>Extracted text</h2></div></div>
+        <pre id="extractedText"></pre>
+      </section>
+
+      <footer class="footer">
+        <div>SENTINEL interface layer · local-first analysis</div>
+        <div><a href="/docs" target="_blank" rel="noreferrer">API docs</a> · <a href="/redoc" target="_blank" rel="noreferrer">ReDoc</a></div>
+      </footer>
+    </main>
+  </div>
+  <script src="/ui/app.js"></script>
+</body>
+</html>
